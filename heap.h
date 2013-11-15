@@ -1,7 +1,7 @@
-// Head file for heap.
+// Header file for heap.
 
 class Heap {
-  private:
+  protected:
     int size, *heap;
   public:
     Heap(int *, int);

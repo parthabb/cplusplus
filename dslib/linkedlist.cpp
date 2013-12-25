@@ -107,30 +107,8 @@ T LinkedList <T> :: getValueByIndex (int index) {
   return itr->getData ();
 }
 
-/*
-int main () {
-  LinkedList <int> * ll = new LinkedList <int> ();
-  ll->print ();
-  ll->insertAtStart (12);
-  ll->insertAtEnd (16);
-  ll->insertAtEnd (2);
-  ll->insertAtStart (100);
-  ll->insert (200, 1);
-  ll->insert (300, 2);
-  ll->insertAtEnd (400);
-  ll->print ();
-  ll->del (16);
-  ll->print ();
-  ll->del (2);
-  ll->print ();
-  ll->del (12);
-  ll->print ();
-  ll->insert (100, 1);
-  ll->insertAtStart (200);
-  ll->insert (300, 2);
-  ll->print ();
-  cout << "index 0 :: value " << ll->getValueByIndex (0) << endl;
-  cout << "index 100000 :: value " << ll->getValueByIndex (100000) << endl;
-  cout << "value 10000 :: index " << ll->getIndexByValue (10000) << endl;
-  cout << "value 200 :: index " << ll->getIndexByValue (200) << endl;
-}*/
+template <class T>
+int LinkedList <T> :: getLength () const {
+  return length;
+}
+

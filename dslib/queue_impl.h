@@ -1,12 +1,7 @@
-// File implementing Queue ADT using linked list.
+// Header file for implementing Queue ADT using linked list.
 
-#include <iostream>
-
-#include "node.h"
-#include "node_impl.h"
-#include "linkedlist.h"
-#include "linkedlist_impl.h"
-#include "queue.h"
+#ifndef QUEUE_IMPL_H_
+#define QUEUE_IMPL_H_
 
 using namespace std;
 
@@ -36,4 +31,4 @@ template <class T>
 bool Queue <T> :: isEmpty () const {
   return ll->getLength () == 0;
 }
-
+#endif

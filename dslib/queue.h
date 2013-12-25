@@ -7,9 +7,10 @@ template <class T>
 class Queue {
   private:
     LinkedList <T> * ll;
-  public: 
-    Queue (); 
+  public:
+    Queue ();
     void enqueue (T);
     T dequeue ();
+    bool isEmpty () const;
 };
 #endif

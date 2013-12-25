@@ -18,5 +18,6 @@ class LinkedList {
     int getIndexByValue (T);
     T getValueByIndex (int);
     void print ();
+    int getLength () const;
 };
 #endif

@@ -103,4 +103,9 @@ T LinkedList <T> :: getValueByIndex (int index) {
   return itr->getData ();
 }
 
+template <class T>
+int LinkedList <T> :: getLength () const {
+  return length;
+}
+
 #endif

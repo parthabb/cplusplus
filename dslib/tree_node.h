@@ -24,6 +24,7 @@ class TreeNode : public Node <T> {
     TreeNode <T> * getParent() const;
     void setParent (TreeNode <T> *);
     int getDepth () const;
+    void setDepth (int);
     void setDiscovery (int);
     void setFinish (int);
     string getColor () const;

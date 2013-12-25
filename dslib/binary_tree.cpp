@@ -11,25 +11,8 @@
 #include "queue_impl.h"
 #include "tree_node.h"
 #include "tree_node_impl.h"
+#include "binary_tree.h"
 
-template <class T>
-class BinaryTree {
-  private:
-    TreeNode <T> * root;
-    Queue <TreeNode <T> *> * q;
-    void inOrder (TreeNode <T> *);
-    void preOrder (TreeNode <T> *);
-    void postOrder (TreeNode <T> *);
-    TreeNode <T> * bfs ();
-    TreeNode <T> * dfs ();
-  public:
-    BinaryTree ();
-    void insert (T);
-    void del (T);
-    void printInOrder ();
-    void printPreOrder ();
-    void printPostOrder ();
-};
 
 template <class T>
 BinaryTree <T> :: BinaryTree () : root (NULL) {
@@ -69,7 +52,7 @@ void BinaryTree <T> :: inOrder (TreeNode <T> *t) {
     return;
   }
   this->inOrder (t->getL_ptr ());
-  cout << t->getData () << '\t';
+  cout << t->getData () << " - (" << t->getDepth () << ")," << '\t';
   this->inOrder (t->getR_ptr ());
 }
 
@@ -85,7 +68,7 @@ void BinaryTree <T> :: preOrder (TreeNode <T> *t) {
   if (t == NULL) {
     return;
   }
-  cout << t->getData () << '\t';
+  cout << t->getData () << " - (" << t->getDepth () << ")," << '\t';
   this->preOrder (t->getL_ptr ());
   this->preOrder (t->getR_ptr ());
 }
@@ -104,20 +87,92 @@ void BinaryTree <T> :: postOrder (TreeNode <T> *t) {
   }
   this->postOrder (t->getL_ptr ());
   this->postOrder (t->getR_ptr ());
-  cout << t->getData () << '\t';
+  cout << t->getData () << " - (" << t->getDepth () << ")," << '\t';
 }
 
 template <class T>
-TreeNode <T> * BinaryTree <T> :: bfs () {
-
+void BinaryTree <T> :: bfs () {
+  TreeNode <T> * itr = root;
+  TreeNode <T> * u, * v;
+  Queue <TreeNode <T> *> * bfsq = new Queue <TreeNode <T> *> ();
+  bfsq->enqueue (itr);
+  itr->setDepth (0);
+  itr->setColor ("grey");
+  while (!bfsq->isEmpty()) {
+    u = bfsq->dequeue();
+    if (u->getR_ptr () && (u->getR_ptr ())->getColor () == "white") {
+      v = u->getR_ptr ();
+      v->setDepth (u->getDepth () + 1);
+      v->setColor ("grey");
+      bfsq->enqueue (v);
+    }
+    if (u->getL_ptr () && (u->getL_ptr ())->getColor () == "white") {
+      v = u->getL_ptr ();
+      v->setDepth (u->getDepth () + 1);
+      v->setColor ("grey");
+      bfsq->enqueue (v);
+    }
+    u->setColor ("black");
+  }
 }
 
 template <class T>
-TreeNode <T> * BinaryTree <T> :: dfs () {
+void BinaryTree <T> :: dfs () {
+  TreeNode <T> * itr;
+  itr = root;
+  int t = 0;  // time.
+  this->dfsRoutine (itr, t);
 }
+
+template <class T>
+void BinaryTree <T> :: dfsRoutine (TreeNode <T> * itr, int &t) {
+  if (itr == NULL) {
+    return;
+  }
+  itr->setDiscovery (++t);
+  this->dfsRoutine (itr->getL_ptr (), t);
+  this->dfsRoutine (itr->getR_ptr (), t);
+  itr->setFinish (++t);
+}
+
 
 template <class T>
 void BinaryTree <T> :: del (T t) {
+  TreeNode <T> * itr = root;
+  TreeNode <T> * u, * v;
+  Queue <TreeNode <T> *> * bfsq = new Queue <TreeNode <T> *> ();
+  bfsq->enqueue (itr);
+  while (!bfsq->isEmpty()) {
+    u = bfsq->dequeue();
+    if (u->getData() == t) {
+      if (u->getL_ptr () != NULL && u->getR_ptr () != NULL) {
+        cout << "Can't delete an internal node." << endl;
+      } else {
+        v = u->getParent ();
+        if (v->getL_ptr() == u) {
+          v->setL_ptr (u->getL_ptr () != NULL ? u->getL_ptr () : u->getR_ptr () );
+          if (v->getL_ptr ()) {
+            (v->getL_ptr ())->setParent (v);
+          }
+        } else {
+          v->setR_ptr (u->getL_ptr () != NULL ? u->getL_ptr () : u->getR_ptr () );
+          if (v->getR_ptr ()) {
+            (v->getR_ptr ())->setParent (v);
+          }
+        }
+      }
+      delete u;
+      return;
+    }
+    if (u->getR_ptr ()) {
+      v = u->getR_ptr ();
+      bfsq->enqueue (v);
+    }
+    if (u->getL_ptr ()) {
+      v = u->getL_ptr ();
+      bfsq->enqueue (v);
+    }
+  }
 }
 
 int main () {
@@ -126,8 +181,19 @@ int main () {
   for (int i = 0; i < 10; i++) {
     bt->insert (i);
   }
+  bt->bfs ();
+  bt->dfs ();
+  bt->del (0);
   bt->printInOrder ();
-  bt->printPreOrder ();
-  bt->printPostOrder ();
+  bt->del (4);
+  bt->printInOrder ();
+  bt->del (9);
+  bt->printInOrder ();
+  bt->del (1);
+  bt->printInOrder ();
+  bt->del (7);
+  bt->printInOrder ();
+  bt->del (8);
+  bt->printInOrder ();
   cout << "exit" << endl;
 }

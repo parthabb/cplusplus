@@ -43,6 +43,11 @@ int TreeNode <T> :: getDepth () const {
 }
 
 template <class T>
+void TreeNode <T> :: setDepth (int d) {
+  this->depth = d;
+}
+
+template <class T>
 void TreeNode <T> :: setDiscovery (int d) {
   this->discovery = d;
 }

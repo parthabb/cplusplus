@@ -9,24 +9,10 @@
 #include "linkedlist_impl.h"
 #include "tree_node.h"
 #include "tree_node_impl.h"
+#include "bst.h"
 
 using namespace std;
 
-
-template <class T>
-class BinarySearchTree {
-  private:
-    TreeNode <T> * root;
-    LinkedList <TreeNode <T> *> * in_order_list;
-    void inOrderReplacement (TreeNode <T> *);
-  public:
-    BinarySearchTree ();
-    void insert (T);
-    void search (T);
-    void del (T);
-    TreeNode <T> * getRoot () const;
-    void printPreOrder (TreeNode <T> *);
-};
 
 template <class T>
 BinarySearchTree <T> :: BinarySearchTree () : root (NULL), in_order_list (new LinkedList <TreeNode <T> *> ()) {
@@ -38,7 +24,7 @@ void BinarySearchTree <T> :: insert (T t) {
   TreeNode <T> * node = new TreeNode <T> ();
   node->setData (t);
   if (itr == NULL) {
-    root = node;
+    this->root = node;
   } else {
     while (true) {
       if (itr->getData () > t) {
@@ -62,6 +48,7 @@ void BinarySearchTree <T> :: insert (T t) {
 
     node->setParent (itr);
   }
+  this->balanceTree (this->root);
 }
 
 template <class T>
@@ -130,6 +117,7 @@ void BinarySearchTree <T> :: del (T t) {
   }
   delete itr;
   cout << t << ": Element deleted" << endl;
+  this->balanceTree (this->root);
 }
 
 template <class T>
@@ -147,7 +135,7 @@ void BinarySearchTree <T> :: printPreOrder (TreeNode <T> * itr) {
   if (itr == NULL) {
     return;
   }
-  cout << itr->getData () << '\t';
+  cout << itr->getData () << " - ( " << (itr->getParent () != NULL ? (itr->getParent ())->getData () : -1) << ") " << '\t';
   this->printPreOrder (itr->getL_ptr ());
   this->printPreOrder (itr->getR_ptr ());
 }
@@ -157,16 +145,109 @@ TreeNode <T> * BinarySearchTree <T> :: getRoot () const {
   return this->root;
 }
 
+template <class T>
+int BinarySearchTree <T> :: getBalancingFactor (TreeNode <T> * t) const {
+  if (t == NULL) {
+    return 0;
+  }
+  if (t->getL_ptr () == NULL && t->getR_ptr () == NULL) {
+    return 1;
+  }
+  int heightOfLeftSubTree, heightOfRightSubTree;
+  heightOfLeftSubTree = this->getHeight (t->getL_ptr ());
+  heightOfRightSubTree = this->getHeight (t->getR_ptr ());
+  return heightOfLeftSubTree - heightOfRightSubTree;
+}
+
+template <class T>
+int BinarySearchTree <T> :: getHeight (TreeNode <T> * t) const {
+  // Can be improved using DP.
+  if (t == NULL) {
+    return 0;
+  }
+  int lh = this->getHeight (t->getL_ptr ());
+  int rh = this->getHeight (t->getR_ptr ());
+  return 1 + (lh > rh ? lh : rh);
+}
+
+template <class T>
+void BinarySearchTree <T> :: rotateLeft (TreeNode <T> * t) {
+  if (t == NULL || t->getParent () == NULL) {
+    return;
+  }
+  TreeNode <T> * temp = t->getParent ();
+  TreeNode <T> * parent = temp->getParent ();
+  t->setParent (parent);
+  if (parent != NULL) {
+    parent->getL_ptr () == temp ? parent->setL_ptr (t) : parent->setR_ptr (t);
+  } else {
+    this->root = t;
+  }
+  temp->setR_ptr (t->getL_ptr ());
+  if (t->getL_ptr () != NULL) {
+    (t->getL_ptr ())->setParent (temp);
+  }
+  t->setL_ptr (temp);
+  temp->setParent (t);
+}
+
+template <class T>
+void BinarySearchTree <T> :: rotateRight (TreeNode <T> * t) {
+  if (t == NULL || t->getParent () == NULL) {
+    return;
+  }
+  TreeNode <T> * temp = t->getParent ();
+  TreeNode <T> * parent = temp->getParent ();
+  t->setParent (parent);
+  if (parent != NULL) {
+    parent->getL_ptr () == temp ? parent->setL_ptr (t) : parent->setR_ptr (t);
+  } else {
+    this->root = t;
+  }
+  temp->setL_ptr (t->getR_ptr ());
+  if (t->getR_ptr () != NULL) {
+    (t->getR_ptr ())->setParent (temp);
+  }
+  t->setR_ptr (temp);
+  temp->setParent (t);
+}
+
+template <class T>
+void BinarySearchTree <T> :: balanceTree (TreeNode <T> * t) {
+  if (t == NULL) {
+    return;
+  }
+  this->balanceTree (t->getL_ptr ());
+  this->balanceTree (t->getR_ptr ());
+  int bf = this->getBalancingFactor (t);
+  if (bf > 1) {
+    bf = this->getBalancingFactor (t->getL_ptr ());
+    if (bf < 0) {
+      this->rotateLeft ((t->getL_ptr ())->getR_ptr ());
+    }
+    this->rotateRight (t->getL_ptr ());
+  }
+  if (bf < -1) {
+    bf = this->getBalancingFactor (t->getR_ptr ());
+    if (bf > 0) {
+      this->rotateRight ((t->getR_ptr ())->getL_ptr ());
+    }
+    this->rotateLeft (t->getR_ptr ());
+  }
+}
+
 /*
 int main () {
   BinarySearchTree <int> * bst = new BinarySearchTree <int> ();
   srand(time(NULL));
   for (int i = 0; i < 10; i++) {
     bst->insert (rand () % 10 + 1);
+//    bst->insert (i + 1);
   }
   bst->printPreOrder (bst->getRoot ());
   cout << endl;
   bst->search (rand () % 10 + 1);
+//  bst->search (5);
   for (int i = 0; i < 10; i++) {
     bst->del (rand () % 10 + 1);
     bst->printPreOrder (bst->getRoot ());

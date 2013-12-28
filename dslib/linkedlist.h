@@ -14,7 +14,8 @@ class LinkedList {
     void insert (T, int);  // insert at position int.
     void insertAtStart (T);
     void insertAtEnd (T);
-    void del (T);
+    void deleteByValue (T);
+    void deleteByIndex (int);
     int getIndexByValue (T);
     T getValueByIndex (int);
     void print ();

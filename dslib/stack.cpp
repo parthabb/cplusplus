@@ -28,7 +28,7 @@ T Stack <T> :: pop () {
     cout << "Stack empty." << endl;
   } else {
     cout << "Popping: " << val << endl;
-    ll->del (val);
+    ll->deleteByValue (val);
   }
   return val;
 }

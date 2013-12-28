@@ -55,7 +55,7 @@ void LinkedList <T> :: insertAtEnd (T t) {
 }
 
 template <class T>
-void LinkedList <T> :: del (T t) {
+void LinkedList <T> :: deleteByValue(T t) {
   Node <T> * itr = head;
   Node <T> * prev = head;
   while (itr != NULL && itr->getData () != t) {
@@ -72,8 +72,37 @@ void LinkedList <T> :: del (T t) {
     prev->setF_ptr (itr->getF_ptr ());
   }
   length --;
-  if (length != 0) {
+  if (length == 0) {
     delete itr;
+    head = NULL;
+  }
+}
+
+template <class T>
+void LinkedList <T> :: deleteByIndex (int index) {
+  if (index >= this->length) {
+    cout << "Index out of bounds." << endl;
+    return;
+  }
+  Node <T> * itr = head;
+  Node <T> * prev = head;
+  for (int i = 0; i < index; i++) {
+    prev = itr;
+    itr = itr->getF_ptr ();
+  }
+  if (itr == NULL) {
+    cout << "Item not found." << endl;
+    return;
+  }
+  if (prev == itr) {
+    head = itr->getF_ptr ();
+  } else {
+    prev->setF_ptr (itr->getF_ptr ());
+  }
+  this->length --;
+  if (this->length == 0) {
+    delete itr;
+    head = NULL;
   }
 }
 

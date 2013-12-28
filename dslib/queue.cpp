@@ -27,7 +27,7 @@ T Queue <T> :: dequeue () {
   if (val == (T) -1) {
     cout << "Queue empty." << endl;
   } else {
-    ll->del (val);
+    ll->deleteByValue (val);
   }
   return val;
 }
